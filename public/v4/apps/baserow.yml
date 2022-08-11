@@ -1,0 +1,28 @@
+captainVersion: 4
+version: "3.4"
+services:
+  baserow:
+    container_name: baserow
+    image: baserow/baserow:1.11.0
+    environment:
+      BASEROW_PUBLIC_URL: 'https://baserow.apps.joingardens.online'
+    volumes:
+      - baserowdata:/baserow/data
+volumes:
+  baserowdata:
+caproverOneClickApp:
+    variables:
+        - id: '$$cap_baserow_version'
+          label: Baserow Version
+          defaultValue: '1.11.0'
+          description: Current version of Baserow
+    instructions:
+        start: |-
+            Baserow is an Open-source Airtable alternative. Enable websocket support in Caprover settings after deployment for smooth functioning.
+            More details: https://baserow.io
+        end: |-
+            Baserow has been successfully deployed!
+    displayName: Baserow
+    isOfficial: true
+    description: Open-source Airtable alternative.
+    documentation: See https://baserow.io/docs

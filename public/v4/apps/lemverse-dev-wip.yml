@@ -1,0 +1,88 @@
+captainVersion: 4
+version: "3.8"
+services:
+    mongodb:
+        image: mongo:5.0.3
+        environment:
+            - PUID=1000
+            - PGID=1000
+        volumes:
+            - db:/data/db # Necessary volume to keep database data between restarts
+        restart: unless-stopped
+        networks:
+            - net_lemverse
+    lemverse:
+        build:
+          context:
+          args:
+              - NEXT_PUBLIC_WEBAPP_URL=${NEXT_PUBLIC_WEBAPP_URL}
+        caproverExtra:
+                dockerfileLines:
+                    - FROM geoffreybooth/meteor-base:2.7.3 AS builder
+                    - COPY ./app/package*.json $APP_SOURCE_FOLDER/
+                    - RUN bash $SCRIPTS_FOLDER/build-app-npm-dependencies.sh
+                    - COPY ./app $APP_SOURCE_FOLDER/
+                    - COPY ./core $APP_SOURCE_FOLDER/core/
+                    - RUN bash $SCRIPTS_FOLDER/build-meteor-bundle.sh
+                    - FROM node:14.19.3-alpine
+                    - ENV APP_BUNDLE_FOLDER /opt/bundle
+                    - ENV SCRIPTS_FOLDER /docker
+                    - RUN apk --no-cache add bash
+                    - RUN apk --no-cache add ca-certificates
+                    - RUN apk --no-cache add graphicsmagick
+                    - RUN apk --no-cache add python3 make g++
+                    - COPY --from=builder $SCRIPTS_FOLDER $SCRIPTS_FOLDER/
+                    - COPY --from=builder $APP_BUNDLE_FOLDER/bundle $APP_BUNDLE_FOLDER/bundle/
+                    - RUN bash $SCRIPTS_FOLDER/build-meteor-npm-dependencies.sh
+                    - ENTRYPOINT ["/docker/entrypoint.sh"]
+                    - CMD ["node", "main.js"]
+        container_name: lemverse
+        restart: unless-stopped
+        networks:
+            - net_lemverse
+        depends_on:
+            - mongodb
+        ports:
+            - '3000:3000' # Expose web port to see your change
+            - '7010:7010' # expose peer port
+        volumes:
+            - lemverse:/var/tmp/lemverse # Necessary volume for upload tileset and keep them between restart
+            - ./app:/opt/src # mount local dir to allow hot reload
+            - ./core:/opt/src/core
+        environment:
+            ROOT_URL: ${APP_ROOT_URL:-http://localhost}
+            MONGO_URL: mongodb://mongodb:27017/meteor
+volumes:
+    lemverse:
+        driver: local 
+    db:
+        driver: local
+    
+# Custom network so all services can communicate using a FQDN
+networks:
+    net_lemverse:
+        driver: bridge
+        name: net_lemverse
+caproverOneClickApp:
+    variables:
+        - id: '$$cap_version'
+          label: PrivateBin Version
+          defaultValue: '1.3.4'
+          description: Check out their Docker page for the valid tags https://hub.docker.com/r/privatebin/nginx-fpm-alpine/tags
+          validRegex: "/^([^\\s^\\/])+$/"
+        - id: '$$cap_tz'
+          label: Time Zone
+          defaultValue: America/New_York
+          description: Get yours from https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+          validRegex: '/.{1,}/'
+    instructions:
+        start: |-
+            PrivateBin is a minimalist, open source online pastebin where the server has zero knowledge of pasted data. 
+            Data is encrypted and decrypted in the browser using 256bit AES in Galois Counter mode.
+            More details: https://github.com/PrivateBin/PrivateBin
+        end: |-
+            PrivateBin has been successfully deployed!
+    displayName: PrivateBin
+    isOfficial: true
+    description: A minimalist, open source online pastebin where the server has zero knowledge of pasted data. Data is encrypted/decrypted in the browser using 256 bits AES.
+    documentation: See https://github.com/PrivateBin/docker-nginx-fpm-alpine

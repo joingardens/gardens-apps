@@ -1,0 +1,61 @@
+captainVersion: 4
+version: "3"
+services:
+  budibase:
+    restart: unless-stopped
+    image: budibase/budibase:latest
+    ports:
+      - "8080:80"
+    environment:
+      JWT_SECRET: $$cap_jwt_secret
+      MINIO_ACCESS_KEY: $$cap_minio_access_key
+      MINIO_SECRET_KEY: $$cap_minio_secret_key
+      REDIS_PASSWORD: $$cap_redis_password
+      COUCHDB_USER: $$cap_couch_db_user
+      COUCHDB_PASSWORD: $$cap_couch_db_password
+      INTERNAL_API_KEY: $$cap_internal_api_key
+    volumes:
+      - budibasedata:/data
+volumes:
+  budibasedata:
+    driver: local
+caproverOneClickApp:
+    variables:
+        - id: '$$cap_jwt_secret'
+          label: JWT Secret
+          defaultValue: 'testsecret'
+          description: JWT Secret. You should change this.
+        - id: '$$cap_minio_access_key'
+          label: MINIO Access Key
+          defaultValue: 'budibase'
+          description: MINIO Access Key. You should change this.
+        - id: '$$cap_minio_secret_key'
+          label: MINIO Secret Key
+          defaultValue: 'budibase'
+          description: MINIO Secret Key. You should change this.
+        - id: '$$cap_couch_db_password'
+          label: CouchDB Password
+          defaultValue: 'budibase'
+          description: CouchDB Password. You should change this.
+        - id: '$$cap_couch_db_user'
+          label: CouchDB User
+          defaultValue: 'budibase'
+          description: CouchDB User. You should change this.
+        - id: '$$cap_redis_password'
+          label: Redis Password
+          defaultValue: 'budibase'
+          description: Redis Password. You should change this.
+        - id: '$$cap_internal_api_key'
+          label: Budibase Internal API Key
+          defaultValue: 'budibase'
+          description: Budibase Internal API Key. You should change this.
+    instructions:
+        start: |-
+            Budibase is a platform that helps you build internal apps and automations. It also provides a no-code backend you can use with other apps.
+            More details: https://budibase.com/
+        end: |-
+            Budibase has been successfully deployed!
+    displayName: Budibase
+    isOfficial: true
+    description: A platform that helps you build internal apps. It also provides a no-code backend you can use with other apps.
+    documentation: See https://docs.budibase.com/docs
