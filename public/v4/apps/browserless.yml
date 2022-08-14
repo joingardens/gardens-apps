@@ -1,41 +1,54 @@
+# Caprover schema version
 captainVersion: 4
-services:
-    $$cap_appname:
-        documentation: https://docs.browserless.io/docs/docker-quickstart.html
-        image: browserless/chrome:$$cap_browserless_version
-        restart: always
-        volumes:
-            - $$cap_appname-workspace:/downloads
-            - $$cap_appname-metrics:/metrics
-            - $$cap_appname-user-data:/user-data
-        environment:
-            DEMO_MODE: $$cap_demo_mode
-            ENABLE_DEBUGGER: $$cap_enable_debugger
-            MAX_CONCURRENT_SESSIONS: $$cap_max_concurrent_sessions
-            CONNECTION_TIMEOUT: $$cap_connection_timeout
-            MAX_QUEUE_LENGTH: $$cap_max_queue_length
-            WORKSPACE_DIR: $$cap_workspace_dir
-            WORKSPACE_DELETE_EXPIRED: $$cap_workspace_delete_expired
-            WORKSPACE_EXPIRE_DAYS: $$cap_workspace_expire_days
-            DEFAULT_USER_DATA_DIR: $$cap_default_user_data_dir
-            METRICS_JSON_PATH: $$cap_metrics_json_path
-            DISABLE_AUTO_SET_DOWNLOAD_BEHAVIOR: $$cap_disable_auto_set_download_behavior
-            DEFAULT_BLOCK_ADS: $$cap_default_block_ads
-            ENABLE_API_GET: $$cap_enable_api_get
-            TOKEN: $$cap_token
-            ENABLE_CORS: $$cap_enable_cors
-            ENABLE_XVBF: $$cap_enable_xvbf
-            EXIT_ON_HEALTH_FAILURE: $$cap_exit_on_health_failure
-            DEFAULT_IGNORE_HTTPS_ERRORS: $$cap_default_ignore_https_errors
-            DEFAULT_IGNORE_DEFAULT_ARGS: $$cap_default_ignore_default_args
-            DISABLED_FEATURES: $$cap_disabled_features
-            PREBOOT_CHROME: $$cap_preboot_chrome
-            KEEP_ALIVE: $$cap_keep_alive
-            CHROME_REFRESH_TIME: $$cap_chrome_refresh_time
-            FUNCTION_ENABLE_INCOGNITO_MODE: $$cap_function_enable_incognito_mode
-        caproverExtra:
-            containerHttpPort: '3000'
+
+# Parameters of the Caprover one-click app
+
 caproverOneClickApp:
+
+    # Title and description for one-click app gallery
+
+    displayName: Browserless
+    description: Browserless is a web automation service that helps execute Chrome tasks inside of Docker
+    
+    # Only mark true if the docker-compose is the official one provided by the app developer, or if it's from a trusted source
+
+    isOfficial: true
+
+    # Onboarding instructions
+
+    instructions:
+
+        # Configuration page (user sets variables here)
+
+        start: |-
+            
+            ![Browserless Logo](https://nbygyyaygsxxesvjjcwa.supabase.co/storage/v1/object/public/public/browserless.png)
+            
+
+            🌐 [Browserless website](https://www.browserless.io/)
+            📘 [Help & docs](https://www.browserless.io/docs/start.html)
+            💻 [Source code](https://github.com/browserless/chrome)
+
+            **Browserless** is a web automation service that helps execute Chrome tasks inside of Docker.
+            This is a copy of the official Caprover image.
+            Enter your Browserless configuration parameters and click on next. The app will be deployed for you.  It will take about 1-2 minutes for the process to finish.
+            **You need to activate Websocket support in Caprover settings for Browserless to work as intended**.
+
+            ❗**If you like this app**, consider switching to a [SaaS version](https://www.browserless.io/pricing/) to support developers.
+        
+        # Success page
+
+        end: >-
+            ✨✨ **Browserless is deployed successfully**. 
+            Wait for a couple minutes for it to set up, then access at [http://$$cap_appname.$$cap_root_domain](http://$$cap_appname.$$cap_root_domain) and enjoy! 
+            IMPORTANT: It will take up to 2 minutes for Browserless to be ready. Before that, you might see a 502 error page.
+            
+    # Link to app's documentation and Docker Hub
+
+    documentation: Access docs at https://www.browserless.io/docs/start.html . Docker image is taken from https://docs.browserless.io/docs/docker.html.
+
+    # Variables to be configured by the user
+
     variables:
         - id: $$cap_browserless_version
           label: Browserless Version
@@ -153,13 +166,42 @@ caproverOneClickApp:
           defaultValue: 'false'
           validRegex: /^(true|false)$/
           description: When set, and PREBOOT_CHROME and KEEP_ALIVE are set, allows for generating a fresh page (incognito page) from a re-used browser.
-    instructions:
-        start: >-
-            Browserless Web is communication between web applications without the need for a web browser.
-        end: >-
-            Your service is available at http://$$cap_appname.$$cap_root_domain?token=$$cap_token
-            Atention: you need activate Websocket Support!
-    displayName: Browserless
-    isOfficial: true
-    description: Browserless Web is communication between web applications without the need for a web browser.
-    documentation: https://docs.browserless.io/docs/docker.html
+    
+# Docker-compose definition
+
+services:
+    $$cap_appname:
+        documentation: https://docs.browserless.io/docs/docker-quickstart.html
+        image: browserless/chrome:$$cap_browserless_version
+        restart: always
+        volumes:
+            - $$cap_appname-workspace:/downloads
+            - $$cap_appname-metrics:/metrics
+            - $$cap_appname-user-data:/user-data
+        environment:
+            DEMO_MODE: $$cap_demo_mode
+            ENABLE_DEBUGGER: $$cap_enable_debugger
+            MAX_CONCURRENT_SESSIONS: $$cap_max_concurrent_sessions
+            CONNECTION_TIMEOUT: $$cap_connection_timeout
+            MAX_QUEUE_LENGTH: $$cap_max_queue_length
+            WORKSPACE_DIR: $$cap_workspace_dir
+            WORKSPACE_DELETE_EXPIRED: $$cap_workspace_delete_expired
+            WORKSPACE_EXPIRE_DAYS: $$cap_workspace_expire_days
+            DEFAULT_USER_DATA_DIR: $$cap_default_user_data_dir
+            METRICS_JSON_PATH: $$cap_metrics_json_path
+            DISABLE_AUTO_SET_DOWNLOAD_BEHAVIOR: $$cap_disable_auto_set_download_behavior
+            DEFAULT_BLOCK_ADS: $$cap_default_block_ads
+            ENABLE_API_GET: $$cap_enable_api_get
+            TOKEN: $$cap_token
+            ENABLE_CORS: $$cap_enable_cors
+            ENABLE_XVBF: $$cap_enable_xvbf
+            EXIT_ON_HEALTH_FAILURE: $$cap_exit_on_health_failure
+            DEFAULT_IGNORE_HTTPS_ERRORS: $$cap_default_ignore_https_errors
+            DEFAULT_IGNORE_DEFAULT_ARGS: $$cap_default_ignore_default_args
+            DISABLED_FEATURES: $$cap_disabled_features
+            PREBOOT_CHROME: $$cap_preboot_chrome
+            KEEP_ALIVE: $$cap_keep_alive
+            CHROME_REFRESH_TIME: $$cap_chrome_refresh_time
+            FUNCTION_ENABLE_INCOGNITO_MODE: $$cap_function_enable_incognito_mode
+        caproverExtra:
+            containerHttpPort: '3000'

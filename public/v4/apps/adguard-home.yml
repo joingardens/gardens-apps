@@ -1,6 +1,65 @@
+# Caprover schema version
 captainVersion: 4
+
+# Parameters of the Caprover one-click app
+
+caproverOneClickApp:
+
+    # Title and description for one-click app gallery
+
+    displayName: AdGuard Home
+    description: AdGuard Home is a network-wide ad-blocking, tracking protection, and parental lock software.
+    
+    # Only mark true if the docker-compose is the official one provided by the app developer, or if it's from a trusted source
+
+    isOfficial: true
+
+    # Onboarding instructions
+
+    instructions:
+
+        # Configuration page (user sets variables here)
+
+        start: |-
+            
+            ![AdGuard Home Logo](https://nbygyyaygsxxesvjjcwa.supabase.co/storage/v1/object/public/public/adguard.png?t=2022-08-11T13%3A34%3A42.909Z)
+            
+
+            🌐 [AdGuard Home website](https://adguard.com/en/adguard-home/overview.html)
+            📘 [Help & docs](https://github.com/AdguardTeam/AdGuardHome#getting-started)
+            💻 [Source code](https://github.com/AdguardTeam/AdGuardHome)
+
+            **AdGuard Home** is a network-wide ad-blocking and tracking protection software. It also includes parental control functionality to protect kids from harmful websites.
+            This is a copy of the official Caprover image.
+            Enter your AdGuard Home configuration parameters and click on next. The app will be deployed for you.  It will take about 1-2 minutes for the process to finish.
+
+            ❗**If you like this app**, consider [exploring other products](https://adguard.com/en/welcome.html) from this developer.
+        
+        # Success page
+
+        end: >-
+            ✨✨ **AdGuard Home is deployed successfully**. 
+            Wait for a couple minutes for it to set up, then access at [http://$$cap_appname.$$cap_root_domain](http://$$cap_appname.$$cap_root_domain) and enjoy! 
+            IMPORTANT: It will take up to 2 minutes for AdGuard to be ready. Before that, you might see a 502 error page.
+            Make sure to change port 80 to 3000 in the installation steps. After you are done you will be redirected to $$cap_appname.$$cap_root_domain:3000
+            Just remove 3000 from the url and visit $$cap_appname.$$cap_root_domain
+            You will be redirected to https://$$cap_appname.$$cap_root_domain/login.html
+
+    # Link to app's documentation and Docker Hub
+
+    documentation: Access docs at https://help.passbolt.com/ . Docker image is taken from https://hub.docker.com/r/adguard/adguardhome
+
+    # Variables to be configured by the user
+
+    variables:
+        - id: $$cap_adguard_version
+          label: AdGuard Home Version
+          defaultValue: 'v0.104.3'
+    
+# Docker-compose definition
+
 services:
-    # AdGuard
+
     $$cap_appname:
         image: adguard/adguardhome:$$cap_adguard_version
         restart: always
@@ -14,27 +73,3 @@ services:
             - $$cap_appname-conf:/opt/adguardhome/conf
         caproverExtra:
             containerHttpPort: '3000'
-caproverOneClickApp:
-    variables:
-        - id: $$cap_adguard_version
-          label: AdGuard Home Version
-          defaultValue: 'v0.104.3'
-          description: Check out their docker page for the valid tags https://hub.docker.com/r/adguard/adguardhome/tags
-    instructions:
-        start: >-
-            AdGuard Home is a fast and easy way to block ads on any device and protect kids online!
-        end: >-
-            Aaaand you're done! 😄
-
-            Now enable https and force https from HTTP Settings tabs
-            After that visit https://$$cap_appname.$$cap_root_domain
-            And follow the installation steps
-            Make sure to change port 80 to 3000 in the installation steps
-
-            After you are done you will be redirected to $$cap_appname.$$cap_root_domain:3000
-            Just remove 3000 from the url and visit $$cap_appname.$$cap_root_domain
-            You will be redirected to https://$$cap_appname.$$cap_root_domain/login.html
-    displayName: 'AdGuard Home'
-    isOfficial: true
-    description: AdGuard Home is a fast and easy way to block ads on any device and protect kids online!
-    documentation: Taken from https://hub.docker.com/r/adguard/adguardhome

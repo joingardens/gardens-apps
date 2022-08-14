@@ -1,4 +1,70 @@
+# Caprover schema version
 captainVersion: 4
+
+# Parameters of the Caprover one-click app
+
+caproverOneClickApp:
+
+    # Title and description for one-click app gallery
+
+    displayName: Bookstack
+    description: Bookstack is an open-source platform for knowledge management that let's you collaborate on docs and organize them into books and chapters.
+    
+    # Only mark true if the docker-compose is the official one provided by the app developer, or if it's from a trusted source
+
+    isOfficial: true
+
+    # Onboarding instructions
+
+    instructions:
+
+        # Configuration page (user sets variables here)
+
+        start: |-
+            
+            ![Bookstack Logo](https://nbygyyaygsxxesvjjcwa.supabase.co/storage/v1/object/public/public/bookstack.png?t=2022-08-13T16%3A25%3A41.332Z)
+            
+
+            🌐 [Bookstack website](https://www.bookstackapp.com/)
+            📘 [Help & docs](https://www.bookstackapp.com/docs)
+            💻 [Source code](https://github.com/BookStackApp/BookStack)
+
+            **Bookstack** is an open-source platform for knowledge management that let's you collaborate on docs and organize them into books and chapters.
+            This is a copy of the official Caprover image.
+            Enter your Bookstack configuration parameters and click on next. The app will be deployed for you.  It will take about 1-2 minutes for the process to finish.
+
+            ❗**If you like this app**, consider [donating](https://www.bookstackapp.com/donate) or buying [paid support](https://www.bookstackapp.com/support/) to support developers.
+        
+        # Success page
+
+        end: >-
+            ✨✨ **Bookstack is deployed successfully**. 
+            Wait for a couple minutes for it to set up, then access at [http://$$cap_appname.$$cap_root_domain](http://$$cap_appname.$$cap_root_domain) and enjoy! 
+            IMPORTANT: It will take up to 2 minutes for Bookstack to be ready. Before that, you might see a 502 error page.
+            Sign in with the username `admin@admin.com` and the password `password` . Don't forget to change these credentials in settings!
+            
+    # Link to app's documentation and Docker Hub
+
+    documentation: Access docs at https://www.bookstackapp.com/docs . Docker image is taken from https://hub.docker.com/r/linuxserver/bookstack/tags
+
+    # Variables to be configured by the user
+
+    variables:
+        - label: Database Password
+          description: Password to connect to the database
+          defaultValue: $$cap_gen_random_hex(16)
+          id: $$cap_DB_PASS
+        - label: Timezone
+          description: This is the timezone for the application, find yours at https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+          defaultValue: Europe/London
+          id: $$cap_timezone
+        - id: $$cap_bookstack_version
+          label: Version Tag
+          description: Check out their Docker page for the valid tags https://hub.docker.com/r/linuxserver/bookstack/tags
+          defaultValue: 'v0.29.3-ls99'
+    
+# Docker-compose definition
+
 services:
     $$cap_appname-mariadb:
         image: linuxserver/mariadb:110.4.14mariabionic-ls77
@@ -29,32 +95,3 @@ services:
         restart: always
         volumes:
             - $$cap_appname-config:/config
-caproverOneClickApp:
-    variables:
-        - label: Database Password
-          description: Password to connect to the database
-          defaultValue: $$cap_gen_random_hex(16)
-          id: $$cap_DB_PASS
-        - label: Timezone
-          description: This is the timezone for the application, find yours at https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-          defaultValue: Europe/London
-          id: $$cap_timezone
-        - id: $$cap_bookstack_version
-          label: Version Tag
-          description: Check out their Docker page for the valid tags https://hub.docker.com/r/linuxserver/bookstack/tags
-          defaultValue: 'v0.29.3-ls99'
-    instructions:
-        start: |-
-            A platform to create documentation/wiki content built with PHP & Laravel.
-
-            GitHub: https://github.com/BookStackApp/BookStack
-        end: |-
-            Aaaand you're done! 😄
-
-            Your service is available at http://$$cap_appname.$$cap_root_domain
-
-            The default username is admin@admin.com with the password of password.
-    displayName: BookStack
-    isOfficial: true
-    description: A platform to create documentation/wiki content built with PHP & Laravel
-    documentation: https://www.bookstackapp.com/docs/
