@@ -8,7 +8,7 @@ caproverOneClickApp:
     # Title and description for one-click app gallery
 
     displayName: Ackee
-    description: Self-hosted web analytics with a clean, minimalist interface
+    description: [Analytics][Web analytics] Self-hosted web analytics with a clean, minimalist interface
     
     # Only mark true if the docker-compose is the official one provided by the app developer, or if it's from a trusted source
 

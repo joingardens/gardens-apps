@@ -1,34 +1,53 @@
+# Caprover schema version
 captainVersion: 4
-services:
-    $$cap_appname:
-        depends_on:
-            - $$cap_appname-mariadb
-        image: nmtan/chevereto:$$cap_chevereto_version
-        restart: 'always'
-        environment:
-            TZ: $$cap_tz
-            PUID: $$cap_puid
-            PGID: $$cap_guid
-            CHEVERETO_DB_HOST: srv-captain--$$cap_appname-mariadb
-            CHEVERETO_DB_USERNAME: $$cap_mariadb-user
-            CHEVERETO_DB_PASSWORD: $$cap_mariadb-pass
-            CHEVERETO_DB_NAME: $$cap_mariadb-db
-        volumes:
-            - $$cap_appname-images:/var/www/html/images
-    # MariaDB
-    $$cap_appname-mariadb:
-        image: mariadb:$$cap_mariadb_version
-        environment:
-            MYSQL_RANDOM_ROOT_PASSWORD: '1'
-            MYSQL_DATABASE: $$cap_mariadb-db
-            MYSQL_USER: $$cap_mariadb-user
-            MYSQL_PASSWORD: $$cap_mariadb-pass
-        volumes:
-            - $$cap_appname-mariadb-data:/var/lib/mysql
-        restart: unless-stopped
-        caproverExtra:
-            notExposeAsWebApp: 'true'
+
+# Parameters of the Caprover one-click app
+
 caproverOneClickApp:
+
+    # Title and description for one-click app gallery
+
+    displayName: Chevereto
+    description: Chevereto is an open-source image hosting and image gallery system.
+    
+    # Only mark true if the docker-compose is the official one provided by the app developer, or if it's from a trusted source
+
+    isOfficial: false
+
+    # Onboarding instructions
+
+    instructions:
+
+        # Configuration page (user sets variables here)
+
+        start: |-
+            
+            ![Chevereto Logo](https://nbygyyaygsxxesvjjcwa.supabase.co/storage/v1/object/public/public/Chevereto.png?t=2022-08-09T18%3A29%3A21.472Z)
+            
+
+            🌐 [Chevereto website](https://chevereto.com/)
+            📘 [Help & docs](https://v3-docs.chevereto.com/)
+            💻 [Source code](https://github.com/chevereto)
+
+            **Chevereto** is an open-source image hosting and image gallery system.
+            This is a copy of the official Caprover image.
+            Enter your Chevereto configuration parameters and click on next. The app will be deployed for you.  It will take about 1-2 minutes for the process to finish.
+
+            ❗**If you like this app**, consider switching to [a paid plan](https://chevereto.com/support) to support developers.
+        
+        # Success page
+
+        end: >-
+            ✨✨ **Chevereto is deployed successfully**. 
+            Wait for a couple minutes for it to set up, then access at [http://$$cap_appname.$$cap_root_domain](http://$$cap_appname.$$cap_root_domain) and enjoy! 
+            IMPORTANT: It will take up to 2 minutes for Chevereto to be ready. Before that, you might see a 502 error page.
+            
+    # Link to app's documentation and Docker Hub
+
+    documentation: Access docs at https://v3-docs.chevereto.com/ . Docker details are taken from https://github.com/tanmng/docker-chevereto
+
+    # Variables to be configured by the user
+
     variables:
         - id: $$cap_tz
           label: Timezone
@@ -64,13 +83,35 @@ caproverOneClickApp:
         - id: $$cap_mariadb-pass
           label: MariaDB database user password
           description: Super secret database user password
-    instructions:
-        start: |-
-            Chevereto is a powerful and fast image hosting script that allows you to create your very own full featured image hosting website in just minutes.
-        end: |-
-            Aaaand you're done! 😄
-            Your service is available at http://$$cap_appname.$$cap_root_domain
-    displayName: Chevereto
-    isOfficial: false
-    description: Chevereto is a powerful and fast image hosting script that allows you to create your very own full featured image hosting website in just minutes.
-    documentation: https://github.com/tanmng/docker-chevereto
+    
+# Docker-compose definition
+
+services:
+    $$cap_appname:
+        depends_on:
+            - $$cap_appname-mariadb
+        image: nmtan/chevereto:$$cap_chevereto_version
+        restart: 'always'
+        environment:
+            TZ: $$cap_tz
+            PUID: $$cap_puid
+            PGID: $$cap_guid
+            CHEVERETO_DB_HOST: srv-captain--$$cap_appname-mariadb
+            CHEVERETO_DB_USERNAME: $$cap_mariadb-user
+            CHEVERETO_DB_PASSWORD: $$cap_mariadb-pass
+            CHEVERETO_DB_NAME: $$cap_mariadb-db
+        volumes:
+            - $$cap_appname-images:/var/www/html/images
+    # MariaDB
+    $$cap_appname-mariadb:
+        image: mariadb:$$cap_mariadb_version
+        environment:
+            MYSQL_RANDOM_ROOT_PASSWORD: '1'
+            MYSQL_DATABASE: $$cap_mariadb-db
+            MYSQL_USER: $$cap_mariadb-user
+            MYSQL_PASSWORD: $$cap_mariadb-pass
+        volumes:
+            - $$cap_appname-mariadb-data:/var/lib/mysql
+        restart: unless-stopped
+        caproverExtra:
+            notExposeAsWebApp: 'true'

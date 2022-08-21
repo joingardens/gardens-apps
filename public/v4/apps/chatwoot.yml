@@ -1,4 +1,72 @@
+# Caprover schema version
 captainVersion: 4
+
+# Parameters of the Caprover one-click app
+
+caproverOneClickApp:
+
+    # Title and description for one-click app gallery
+
+    displayName: Chatwoot
+    description: Chatwoot is an open-source live-chat and omnichannel support center.
+    
+    # Only mark true if the docker-compose is the official one provided by the app developer, or if it's from a trusted source
+
+    isOfficial: true
+
+    # Onboarding instructions
+
+    instructions:
+
+        # Configuration page (user sets variables here)
+
+        start: |-
+            
+            ![Chatwoot Logo](https://nbygyyaygsxxesvjjcwa.supabase.co/storage/v1/object/public/public/chatwoot%20logo.svg?t=2022-08-17T19%3A08%3A19.749Z)
+            
+
+            🌐 [Chatwoot website](https://www.chatwoot.com/)
+            📘 [Help & docs](https://www.chatwoot.com/help-center/)
+            💻 [Source code](https://github.com/chatwoot/chatwoot)
+
+            **Chatwoot** is an open-source live-chat and omnichannel support center.
+            This is a copy of the official Caprover image.
+            Enter your Chatwoot configuration parameters and click on next. The app will be deployed for you.  It will take about 1-2 minutes for the process to finish.
+        
+        # Success page
+
+        end: >-
+            ✨✨ **Chatwoot is deployed successfully**. 
+            Wait for a couple minutes for it to set up, then access at [http://$$cap_appname.$$cap_root_domain](http://$$cap_appname.$$cap_root_domain) and enjoy! 
+            IMPORTANT: It will take up to 2 minutes for Chatwoot to be ready. Before that, you might see a 502 error page.
+            Check out the full list of environment variables [here](https://www.chatwoot.com/docs/environment-variables/).
+            
+    # Link to app's documentation and Docker Hub
+
+    documentation: Access docs at https://www.chatwoot.com/help-center/ .
+
+    # Variables to be configured by the user
+
+    variables:
+        - id: $$cap_chatwoot_version
+          label: Chatwoot Version Tag
+          description: Choose the latest version from https://hub.docker.com/r/chatwoot/chatwoot/tags
+          defaultValue: v2.7.0
+        - id: $$cap_chatwoot_secret_key_base
+          label: Chatwoot Secret Key Base
+          description: The randomized string which is used to verify the integrity of signed cookies. Please use a string with more than 26 characters
+          validRegex: /^[^\@]{26,}$/
+        - id: $$cap_chatwoot_postgres_password
+          label: Postgres Password
+          description: Password must be at least 12 characters.  Please use a random string.
+          validRegex: /^[^\@]{12,}$/
+        - id: $$cap_chatwoot_redis_password
+          label: Redis Password
+          description: Password must be at least 12 characters. Please use a random string.
+          validRegex: /^[^\@]{12,}$/
+    
+# Docker-compose definition
+
 services:
     $$cap_appname-postgres:
         image: postgres:12
@@ -63,31 +131,3 @@ services:
                 - ENTRYPOINT ["docker/entrypoints/rails.sh"]
                 - CMD bundle exec sidekiq -C config/sidekiq.yml
             notExposeAsWebApp: 'true'
-caproverOneClickApp:
-    variables:
-        - id: $$cap_chatwoot_version
-          label: Chatwoot Version Tag
-          description: Choose the latest version from https://hub.docker.com/r/chatwoot/chatwoot/tags
-          defaultValue: v2.7.0
-        - id: $$cap_chatwoot_secret_key_base
-          label: Chatwoot Secret Key Base
-          description: The randomized string which is used to verify the integrity of signed cookies. Please use a string with more than 26 characters
-          validRegex: /^[^\@]{26,}$/
-        - id: $$cap_chatwoot_postgres_password
-          label: Postgres Password
-          description: Password must be at least 12 characters.  Please use a random string.
-          validRegex: /^[^\@]{12,}$/
-        - id: $$cap_chatwoot_redis_password
-          label: Redis Password
-          description: Password must be at least 12 characters. Please use a random string.
-          validRegex: /^[^\@]{12,}$/
-    instructions:
-        start: Open-source customer support SaaS alternative to Intercom, Drift, Crisp.
-        end: >-
-            Your Chatwoot instance is now successfully deployed.
-
-            Refer https://www.chatwoot.com/docs/environment-variables/ for full list of environment variables available. Let us know if you have any queries through hello@chatwoot.com
-    displayName: Chatwoot
-    isOfficial: true
-    description: Open-source customer support SaaS alternative to Intercom, Drift, Crisp
-    documentation: 'Read more at: https://www.chatwoot.com/docs'
