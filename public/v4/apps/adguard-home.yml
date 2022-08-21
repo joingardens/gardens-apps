@@ -7,7 +7,7 @@ caproverOneClickApp:
 
     # Title and description for one-click app gallery
 
-    displayName: Personal - AdGuard Home
+    displayName: AdGuard Home
     description: Personal, Ad blocking - AdGuard Home is a network-wide ad-blocking, tracking protection, and parental lock software.
     
     # Only mark true if the docker-compose is the official one provided by the app developer, or if it's from a trusted source
