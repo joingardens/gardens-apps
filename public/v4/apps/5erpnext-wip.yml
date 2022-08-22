@@ -1,0 +1,95 @@
+captainVersion: 4
+x-depends-on-configurator: &depends_on_configurator
+  depends_on:
+    configurator:
+      condition: service_completed_successfully
+
+services:
+  configurator:
+    image: frappe/frappe-worker:$$cap_erpnext_version
+    volumes:
+    - sites:/home/frappe/frappe-bench/sites
+    command: configure.py
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      REDIS_CACHE: ${REDIS_CACHE}
+      REDIS_QUEUE: ${REDIS_QUEUE}
+      REDIS_SOCKETIO: ${REDIS_SOCKETIO}
+      SOCKETIO_PORT: 9000
+    depends_on: {}
+
+  backend:
+    image: frappe/frappe-worker:$$cap_erpnext_version
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - assets:/home/frappe/frappe-bench/sites/assets:ro
+
+  frontend:
+    image: frappe/frappe-nginx:$$cap_erpnext_version
+    environment:
+      BACKEND: backend:8000
+      SOCKETIO: websocket:9000
+      FRAPPE_SITE_NAME_HEADER: ${FRAPPE_SITE_NAME_HEADER:-$$host}
+      UPSTREAM_REAL_IP_ADDRESS: ${UPSTREAM_REAL_IP_ADDRESS:-127.0.0.1}
+      UPSTREAM_REAL_IP_HEADER: ${UPSTREAM_REAL_IP_HEADER:-X-Forwarded-For}
+      UPSTREAM_REAL_IP_RECURSIVE: ${UPSTREAM_REAL_IP_RECURSIVE:-off}
+    volumes:
+      - sites:/usr/share/nginx/html/sites
+      - assets:/usr/share/nginx/html/assets
+    ports:
+      - 8080:8080
+    depends_on:
+      - backend
+      - websocket
+
+  websocket:
+    <<: *depends_on_configurator
+    image: frappe/frappe-socketio:$$cap_erpnext_version
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+
+  queue-short:
+    image: frappe/frappe-worker:$$cap_erpnext_version
+    volumes:
+    - sites:/home/frappe/frappe-bench/sites
+    command: bench worker --queue short
+
+  queue-default:
+    image: frappe/frappe-worker:$$cap_erpnext_version
+    volumes:
+    - sites:/home/frappe/frappe-bench/sites
+    command: bench worker --queue default
+
+  queue-long:
+   image: frappe/frappe-worker:$$cap_erpnext_version
+   volumes:
+    - sites:/home/frappe/frappe-bench/sites
+   command: bench worker --queue long
+
+  scheduler:
+    image: frappe/frappe-worker:$$cap_erpnext_version
+    volumes:
+    - sites:/home/frappe/frappe-bench/sites
+    command: bench schedule
+
+# ERPNext requires local assets access (Frappe does not)
+volumes:
+  sites:
+  assets:
+caproverOneClickApp:
+    variables:
+        - id: '$$cap_erpnext_version'
+          label: Frappe Version for ERPNext
+          defaultValue: '14.0.2'
+          description: See all releases on https://github.com/frappe/frappe/releases
+    instructions:
+        start: |-
+            ERPNext is a modular, open-source ERP system based on the Frappe framework.
+            More details: https://erpnext.com/
+        end: |-
+            ERPNext has been successfully deployed!
+    displayName: ERPNext
+    isOfficial: true
+    description: Operations, Enterprise resource planning (ERP) - A modular, open-source ERP system based on the Frappe framework.
+    documentation: See https://docs.erpnext.com/

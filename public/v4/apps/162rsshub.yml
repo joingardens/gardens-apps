@@ -1,0 +1,40 @@
+captainVersion: 4
+version: '3'
+services:
+    rsshub:
+        image: diygod/rsshub:chromium-bundled
+        restart: always
+        ports:
+            - '1200:1200'
+        environment:
+            NODE_ENV: production
+            CACHE_TYPE: redis
+            REDIS_URL: 'srv-captain--redis'
+        depends_on:
+            - redis
+        caproverExtra:
+            containerHttpPort: '1200'
+
+    redis:
+        image: redis:alpine
+        restart: always
+        volumes:
+            - redis-data:/data
+volumes:
+    redis-data:
+caproverOneClickApp:
+    variables:
+        - id: '$$cap_rsshub_version'
+          label: RSSHub Version
+          defaultValue: '1.3.4'
+          description: Check out their Docker page for the valid tags 
+          validRegex: "/^([^\\s^\\/])+$/"
+    instructions:
+        start: |-
+            RSSHub
+        end: |-
+            RSSHub has been successfully deployed!
+    displayName: RSSHub
+    isOfficial: true
+    description: Personal, Feeds and RSS - RSSHub is an open source, easy to use, and extensible RSS feed aggregator capable of generating RSS feeds from pretty much everything.
+    documentation: See 

@@ -1,0 +1,90 @@
+# Caprover schema version
+captainVersion: 4
+
+# Parameters of the Caprover one-click app
+
+caproverOneClickApp:
+
+    # Title and description for one-click app gallery
+
+    displayName: Cachet
+    description: DevOps, Status page - Cachet is an open-source status page system.
+    
+    # Only mark true if the docker-compose is the official one provided by the app developer, or if it's from a trusted source
+
+    isOfficial: true
+
+    # Onboarding instructions
+
+    instructions:
+
+        # Configuration page (user sets variables here)
+
+        start: |-
+            
+            ![Cachet Logo](https://nbygyyaygsxxesvjjcwa.supabase.co/storage/v1/object/public/public/cachet.png?t=2022-08-16T14%3A24%3A04.823Z)
+            
+
+            🌐 [Cachet website](https://cachethq.io/)
+            📘 [Help & docs](https://docs.cachethq.io/)
+            💻 [Source code](https://github.com/CachetHQ/Cachet)
+
+            **Cachet** is an open-source status page system.
+            This is a copy of the official Caprover image.
+            Enter your Cachet configuration parameters and click on next. The app will be deployed for you.  It will take about 1-2 minutes for the process to finish.
+
+            ❗**If you like this app**, consider [donating](https://cachethq.io/donate) to support developers.
+        
+        # Success page
+
+        end: >-
+            ✨✨ **Cachet is deployed successfully**. 
+            Wait for a couple minutes for it to set up, then access at [http://$$cap_appname.$$cap_root_domain](http://$$cap_appname.$$cap_root_domain) and enjoy! 
+            IMPORTANT: It will take up to 2 minutes for Cachet to be ready. Before that, you might see a 502 error page.
+            
+    # Link to app's documentation and Docker Hub
+
+    documentation: Access docs at https://docs.cachethq.io/ .
+
+    # Variables to be configured by the user
+
+    variables:
+        - id: $$cap_DB_PASS
+          label: Database Password
+          description: Password to connect to the database
+          defaultValue: $$cap_gen_random_hex(16)
+        - id: $$cap_cachet_version
+          label: Version Tag
+          description: Check out their Docker page for the valid tags https://hub.docker.com/r/cachethq/docker/tags
+          defaultValue: '2.3.15'
+    
+# Docker-compose definition
+
+services:
+    $$cap_appname-postgres:
+        image: postgres:12-alpine
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: $$cap_DB_PASS
+        volumes:
+            - $$cap_appname-postgres-data:/var/lib/postgresql/data
+        caproverExtra:
+            notExposeAsWebApp: 'true'
+    $$cap_appname:
+        image: cachethq/docker:$$cap_cachet_version
+        environment:
+            DB_DRIVER: pgsql
+            DB_HOST: srv-captain--$$cap_appname-postgres
+            DB_PORT: 5432
+            DB_DATABASE: postgres
+            DB_USERNAME: postgres
+            DB_PASSWORD: $$cap_DB_PASS
+            DB_PREFIX: chq_
+            APP_KEY: $$cap_gen_random_hex(32)
+            APP_LOG: errorlog
+            APP_ENV: production
+            APP_DEBUG: false
+            DEBUG: false
+        restart: always
+        caproverExtra:
+            containerHttpPort: '8000'
