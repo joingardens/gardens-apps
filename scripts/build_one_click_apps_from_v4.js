@@ -57,7 +57,8 @@ function createAppList(appsFileNames, pathOfApps) {
                 displayName: caproverOneClickApp.displayName,
                 description: caproverOneClickApp.description,
                 isOfficial: `${caproverOneClickApp.isOfficial}`.toLowerCase().trim() === 'true',
-                logoUrl: apps[i] + '.png'
+                logoUrl: apps[i] + '.png',
+                isFeatured: caproverOneClickApp.isFeatured
             };
         } else {
             throw new Error('Unknown captain-version: ' + captainVersion);
