@@ -90,3 +90,4 @@ caproverOneClickApp:
     displayName: n8n.io
     isOfficial: true
     description: Operations, Workflow automation - n8n is a free and open node based Workflow Automation Tool.
+    isFeatured: true

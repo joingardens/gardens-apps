@@ -120,3 +120,4 @@ caproverOneClickApp:
     isOfficial: true
     description: General, Office suite - Nextcloud is a suite of client-server software for creating and using file hosting services
     documentation: Taken from https://hub.docker.com/_/nextcloud
+    isFeatured: true
